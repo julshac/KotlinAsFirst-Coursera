@@ -1,7 +1,10 @@
 @file:Suppress("UNUSED_PARAMETER")
+
 package lesson2.task2
 
 import lesson1.task1.sqr
+import kotlin.math.abs
+import kotlin.math.floor
 
 /**
  * Пример
@@ -17,7 +20,18 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  * Четырехзначное число назовем счастливым, если сумма первых двух ее цифр равна сумме двух последних.
  * Определить, счастливое ли заданное число, вернуть true, если это так.
  */
-fun isNumberHappy(number: Int): Boolean = TODO()
+fun isNumberHappy(number: Int): Boolean {
+    fun getIntFromNumber(sum: Int, number: Int, intCount: Int): Int {
+        if (intCount == 0) return sum
+        val endNumber = number % 10
+        val nextSum = sum + endNumber
+        return getIntFromNumber(nextSum, number / 10, intCount - 1)
+    }
+
+    val sumOfLastNumbers = getIntFromNumber(0, number, 2)
+    val sumOfFirstNumbers = getIntFromNumber(0, number / 100, 2)
+    return sumOfLastNumbers == sumOfFirstNumbers
+}
 
 /**
  * Простая
@@ -26,8 +40,8 @@ fun isNumberHappy(number: Int): Boolean = TODO()
  * Определить, угрожают ли они друг другу. Вернуть true, если угрожают.
  * Считать, что ферзи не могут загораживать друг друга.
  */
-fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean = TODO()
-
+fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
+        (abs(y1 - y2) == abs(x1 - x2)) || (x1 == x2 || y2 == y1)
 
 /**
  * Простая
@@ -35,7 +49,14 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean = TODO()
  * Дан номер месяца (от 1 до 12 включительно) и год (положительный).
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
-fun daysInMonth(month: Int, year: Int): Int = TODO()
+fun daysInMonth(month: Int, year: Int): Int
+{
+    return when {
+        (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0) -> 29
+        month == 2 -> 28
+        else -> 30 + (month + month / 8) % 2
+    }
+}
 
 /**
  * Средняя
