@@ -236,4 +236,24 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int {
+    val cache = mutableListOf<Int>()
+    for (i in 0 until n + 1) {
+        val temp = fib(i)
+        if (temp > 10) {
+            getNumbersArray(temp).forEach { number -> cache.add(number) }
+        } else
+            cache.add(temp)
+    }
+    return cache[n]
+}
+
+fun getNumbersArray(n: Int): List<Int> {
+    var temp = n
+    val result = mutableListOf<Int>()
+    while (temp > 0) {
+        result.add(temp % 10)
+        temp /= 10
+    }
+    return result.reversed()
+}
