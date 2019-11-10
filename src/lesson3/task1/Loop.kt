@@ -111,7 +111,13 @@ fun lcm(m: Int, n: Int): Int {
  *
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
-fun minDivisor(n: Int): Int = TODO()
+fun minDivisor(n: Int): Int {
+    for (i in 2 until n + 1) {
+        if (n % i == 0)
+            return i
+    }
+    return n
+}
 
 /**
  * Простая
