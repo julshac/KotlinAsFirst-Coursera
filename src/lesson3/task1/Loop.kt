@@ -244,6 +244,8 @@ fun fibSequenceDigit(n: Int): Int {
             getNumbersArray(temp).forEach { number -> cache.add(number) }
         } else
             cache.add(temp)
+        if (cache.count() > n)
+            return cache[n]
     }
     return cache[n]
 }
