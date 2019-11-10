@@ -4,6 +4,8 @@ package lesson4.task1
 
 import lesson1.task1.discriminant
 import kotlin.math.sqrt
+import kotlin.math.pow
+
 
 /**
  * Пример
@@ -220,7 +222,17 @@ fun decimal(digits: List<Int>, base: Int): Int = TODO()
  * 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: str = "13c", base = 14 -> 250
  */
-fun decimalFromString(str: String, base: Int): Int = TODO()
+fun decimalFromString(str: String, base: Int): Int {
+    var result = 0
+    val inputString = str.reversed()
+    for (i in inputString.indices) {
+        result += if (inputString[i].isDigit())
+            (Character.getNumericValue(inputString[i]) * base.toDouble().pow(i)).toInt()
+        else
+            ((inputString[i].toDouble() - 87) * base.toDouble().pow(i)).toInt()
+    }
+    return result
+}
 
 /**
  * Сложная
@@ -230,7 +242,22 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun roman(n: Int): String {
+    val numeralViews = listOf(
+            1000 to "M", 900 to "CM", 500 to "D", 400 to "CD", 100 to "C", 90 to "XC", 50 to "L", 40 to "XL",
+            10 to "X", 9 to "IX", 5 to "V", 4 to "IV", 1 to "I").toMap()
+
+    var arabic = n
+    var resultRomanString = ""
+
+    for ((view, romanNumber) in numeralViews) {
+        while (arabic / view > 0) {
+            arabic -= view
+            resultRomanString += romanNumber
+        }
+    }
+    return resultRomanString
+}
 
 /**
  * Очень сложная
@@ -240,3 +267,4 @@ fun roman(n: Int): String = TODO()
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 fun russian(n: Int): String = TODO()
+
