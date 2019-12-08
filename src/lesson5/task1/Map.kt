@@ -276,8 +276,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
  *   ) -> emptySet()
  */
 
-fun selectTreasure(treasureSet: List<Map.Entry<String, Pair<Int, Int>>>, capacity: Int): Int {
-    val resultSet = mutableSetOf<String>()
+fun selectTreasure(treasureSet: List<Map.Entry<String, Pair<Int, Int>>>, capacity: Int): Set<String> {
     val n = treasureSet.size
     val dp = Array(capacity + 1) { IntArray(n + 1) }
     for (j in 1..n) {
@@ -286,15 +285,27 @@ fun selectTreasure(treasureSet: List<Map.Entry<String, Pair<Int, Int>>>, capacit
                 dp[weights][j] = Math.max(dp[weights][j - 1], dp[weights - treasureSet[j - 1].value.first][j - 1] + treasureSet[j - 1].value.second)
             } else {
                 dp[weights][j] = dp[weights][j - 1]
-                resultSet.add(treasureSet[j - 1].key)
             }
         }
     }
-    return dp[capacity][n]
+
+    val lastColumn = dp.lastIndex
+    val resultSet = mutableSetOf<String>()
+
+    var weight = lastColumn
+    var j = n
+    while (j > 0) {
+        if (dp[weight][j] != dp[weight][j - 1]) {
+            resultSet.add(treasureSet[j - 1].key)
+
+            weight -= treasureSet[j - 1].value.first
+        }
+
+        j -= 1
+    }
+    return resultSet
 }
 
 
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
-    selectTreasure(treasures.entries.filter { treasure -> treasure.value.first < capacity }, capacity)
-    return emptySet()
-}
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> =
+        selectTreasure(treasures.entries.filter { treasure -> treasure.value.first <= capacity }, capacity)
