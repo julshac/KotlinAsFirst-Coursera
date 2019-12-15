@@ -1,6 +1,6 @@
-@file:Suppress("UNUSED_PARAMETER", "ConvertCallChainIntoSequence")
-
 package lesson6.task1
+
+import java.io.IOException
 
 /**
  * Пример
@@ -49,12 +49,10 @@ fun main(args: Array<String>) {
         val seconds = timeStrToSeconds(line)
         if (seconds == -1) {
             println("Введённая строка $line не соответствует формату ЧЧ:ММ:СС")
-        }
-        else {
+        } else {
             println("Прошло секунд с начала суток: $seconds")
         }
-    }
-    else {
+    } else {
         println("Достигнут <конец файла> в процессе чтения строки. Программа прервана")
     }
 }
@@ -121,7 +119,39 @@ fun bestLongJump(jumps: String): Int = TODO()
  * Прочитать строку и вернуть максимальную взятую высоту (230 в примере).
  * При нарушении формата входной строки вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+//    val pattern = "(\\d+\\W+)*".toRegex()
+//    if (!jumps.matches(pattern))
+//        return -1
+    try {
+        val splitted = jumps.split(" ")
+        var result = 0
+        var i = 0
+        while (i < splitted.count()) {
+            when (splitted[i]) {
+                "+" -> {
+                    if (result < splitted[i - 1].toInt())
+                        result = splitted[i - 1].toInt()
+                    i++
+                }
+                "%+" -> {
+                    if (result < splitted[i - 1].toInt())
+                        result = splitted[i - 1].toInt()
+                    i++
+                }
+                "%%+" -> {
+                    if (result < splitted[i - 1].toInt())
+                        result = splitted[i - 1].toInt()
+                    i++
+                }
+                else -> i++
+            }
+        }
+        return if (result == 0 && !jumps.contains("+")) -1 else result
+    } catch (ex: IOException) {
+        return -1
+    }
+}
 
 /**
  * Сложная
@@ -132,7 +162,32 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    try {
+        val pattern = "(^\\W|\\s\\W\\s\\W|\\d\\s\\d|[a-zA-Z])".toRegex()
+        if (expression.contains(pattern))
+            throw IllegalArgumentException()
+        val splitted = expression.split(" ")
+        var result = splitted[0].toInt()
+        var i = 0
+        while (i < splitted.count()) {
+            when (splitted[i]) {
+                "+" -> {
+                    result += splitted[i + 1].toInt()
+                    i++
+                }
+                "-" -> {
+                    result -= splitted[i + 1].toInt()
+                    i++
+                }
+                else -> i++
+            }
+        }
+        return result
+    } catch (ex: IOException) {
+        throw IllegalArgumentException()
+    }
+}
 
 /**
  * Сложная
@@ -169,7 +224,33 @@ fun mostExpensive(description: String): String = TODO()
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    val arabicSingleViews = listOf(
+            "M" to 1000, "D" to 500, "C" to 100, "L" to 50, "X" to 10, "V" to 5, "I" to 1).toMap()
+
+    val arabicViews = listOf(
+            "CM" to 900, "CD" to 400, "XC" to 90, "XL" to 40, "IX" to 9, "IV" to 4).toMap()
+
+    var resultArabic = 0
+    var i = 0
+    for ((singleView, arabicSingleNumber) in arabicSingleViews) {
+        while (i < roman.count()) {
+            for ((view, arabicNumber) in arabicViews) {
+                val temp = if (i + 2 <= roman.count()) i + 2 else i + 1
+                if (view == roman.substring(i, temp)) {
+                    resultArabic += arabicNumber
+                    i += 2
+                    if (i >= roman.count()) return resultArabic
+                }
+            }
+            if (singleView == roman[i].toString()) {
+                resultArabic += arabicSingleNumber
+                i++
+            }
+        }
+    }
+    return if (resultArabic == 0) -1 else resultArabic
+}
 
 /**
  * Очень сложная
