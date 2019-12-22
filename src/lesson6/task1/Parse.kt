@@ -1,6 +1,7 @@
 package lesson6.task1
 
 import java.io.IOException
+import java.lang.IllegalArgumentException
 
 /**
  * Пример
@@ -163,30 +164,29 @@ fun bestHighJump(jumps: String): Int {
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
-    try {
-        val pattern = "(^\\W|\\s\\W\\s\\W|\\d\\s\\d|[a-zA-Z])".toRegex()
-        if (expression.contains(pattern))
-            throw IllegalArgumentException()
-        val splitted = expression.split(" ")
-        var result = splitted[0].toInt()
-        var i = 0
-        while (i < splitted.count()) {
-            when (splitted[i]) {
-                "+" -> {
-                    result += splitted[i + 1].toInt()
-                    i++
-                }
-                "-" -> {
-                    result -= splitted[i + 1].toInt()
-                    i++
-                }
-                else -> i++
-            }
-        }
-        return result
-    } catch (ex: IOException) {
+
+    val tokens = expression.split(' ')
+
+    if (tokens.isEmpty())
         throw IllegalArgumentException()
+
+    var canBeNumber = true
+    var result = 0
+    var lastSymbol = "+"
+    for (token in tokens) {
+        if (canBeNumber) {
+            if (token.any { p -> !p.isDigit() }) throw IllegalArgumentException()
+            val number = token.toIntOrNull() ?: throw IllegalArgumentException()
+            result = if (lastSymbol == "+") result + number else result - number
+            canBeNumber = false
+        } else {
+            val symbol = if (token == "+" || token == "-") token else throw IllegalArgumentException()
+            lastSymbol = symbol
+            canBeNumber = true
+        }
     }
+
+    return result
 }
 
 /**
@@ -224,33 +224,7 @@ fun mostExpensive(description: String): String = TODO()
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int {
-    val arabicSingleViews = listOf(
-            "M" to 1000, "D" to 500, "C" to 100, "L" to 50, "X" to 10, "V" to 5, "I" to 1).toMap()
-
-    val arabicViews = listOf(
-            "CM" to 900, "CD" to 400, "XC" to 90, "XL" to 40, "IX" to 9, "IV" to 4).toMap()
-
-    var resultArabic = 0
-    var i = 0
-    for ((singleView, arabicSingleNumber) in arabicSingleViews) {
-        while (i < roman.count()) {
-            for ((view, arabicNumber) in arabicViews) {
-                val temp = if (i + 2 <= roman.count()) i + 2 else i + 1
-                if (view == roman.substring(i, temp)) {
-                    resultArabic += arabicNumber
-                    i += 2
-                    if (i >= roman.count()) return resultArabic
-                }
-            }
-            if (singleView == roman[i].toString()) {
-                resultArabic += arabicSingleNumber
-                i++
-            }
-        }
-    }
-    return if (resultArabic == 0) -1 else resultArabic
-}
+fun fromRoman(roman: String): Int = TODO()
 
 /**
  * Очень сложная
